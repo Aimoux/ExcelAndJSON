@@ -1,0 +1,32 @@
+引用问题:
+1. 工程添加 C:\Program Files\Unity2017\Editor\Data\Managed\UnityEngine\UnityEngine.dll
+2. 工程添加 C:\Program Files\Unity2017\Editor\Data\Managed\UnityEngine\UnityEngine.CoreModule.dll
+3. 工程添加 D:\work\github\ILRuntimeU3D\ILRuntimeDemo\Library\ScriptAssemblies\Assembly-CSharp.dll
+   保证hotfix工程能访问 u3d工程中的代码
+4. 设置使用的.Net Framework版本 要与 Assembly-CSharp.dll 一致
+
+碰到问题Hotfix 编译失败:
+错误: CS0012	类型“MulticastDelegate”在未引用的程序集中定义.
+解决: 参考引文步骤3, 4（确认Hotfix 工程与 U3D工程的.NET版本库一致）
+
+错误: CS0012 类型MonoBehaviour 无法找到
+解决: 参考引用步骤1,2 
+
+错误: U3D项目升级后出错 
+         Copying assembly from 'Temp/Assembly-CSharp.dll' to 'Library/ScriptAssemblies/Assembly-CSharp.dll' failed
+解决: 重启并关闭所有杀毒软件并重新打开U3D工程.
+
+错误: 生成CLR绑定后出现
+        UnityEngine_Vector2_Binding.cs(26,58): error CS1061
+解决: 在BindingCodeGenerator.cs:53 行添加下面代码
+        using System.Linq;
+
+        后删除Generated目录, 重新生成CLR绑定文件
+
+错误: 生成CLR绑定后出现
+        System_Single_Binding.cs(251,55): error CS0117: 'float' does not contain a definition for 'IsFinite'
+解决: 每次生成后, 将251行代码改为下面写法
+            //var result_of_this_method = System.Single.IsFinite(@f);
+
+            __ret->ObjectType = ObjectTypes.Integer;
+            __ret->Value = 0;// result_of_this_method ? 1 : 0;
